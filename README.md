@@ -1,1 +1,1 @@
-# Infinite-Scroll
+Welcome to Picturistic! This project is a modern image gallery web app that demonstrates infinite scrolling, image viewing, and a simple review system (comments, likes, views) using Node.js and MySQL.
