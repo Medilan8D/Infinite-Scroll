@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scroll</title>
+    <!--internal styling-->
+    <style>
+        .task-bar {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 92%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+        a:hover{
+            background-color: rgb(153, 98, 25);
+            
+        }
+
+        .task-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .task-bar nav {
+            display:flex;
+            gap: 20px;
+        }
+
+        .task-bar a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Adjusting the page content */
+        body {
+            margin-top: 60px; /* To prevent content from being hidden behind the task bar */
+        }
+
+        /* View Image Styles */
+        .view-image {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .view-image img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .view-image span {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Image Container Styles */
+        .image-container {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-container img {
+            cursor: pointer;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="task-bar">
+        <h1><i>Image Gallery</i></h1>
+        <nav>
+             <a href="home.html">Home</a> 
+            <a href="about.html">About</a> 
+            <a href="contact.html">Contact</a> 
+        </nav>
+    </div>
+    <div class="view-image">
+        <img src="https://fastly.picsum.photos/id/10/200/200.jpg?hmac=Pal2P4G4LRZVjNnjESvYwti2SuEi-LJQqUKkQUoZq_g" alt="Full Image">
+        <span>X</span>
+    </div>
+    <div class="image-container">
+        <!-- Images will be loaded here -->
+    </div>
+</body>
+<script>
+    let images = document.querySelectorAll(".image-container img");
+    let viewImage = document.querySelector(".view-image");
+    let fullImage = document.querySelector(".view-image img");
+    let closeBtn = document.querySelector(".view-image span");
+    let imageContainer = document.querySelector(".image-container");
+
+    // Close button functionality
+    closeBtn.addEventListener('click', function () {
+        viewImage.style.display = "none";
+    });
+
+    // Function to load images
+    async function getImage(n) {
+        for (let i = 0; i < n; i++) {
+            let res = await fetch("https://picsum.photos/200/300");
+            let url = res.url;
+            let img = document.createElement("img");
+            img.src = url;
+            imageContainer.appendChild(img);
+
+            // Add click event to each image to display in viewImage
+            img.addEventListener("click", function (e) {
+                viewImage.style.display = "flex";
+                fullImage.src = e.target.src;
+            });
+        }
+    }
+    //1. Get Review Data for an Image
+    fetch('http://localhost:3000/reviews?image_id=IMAGE_ID')
+  .then(response => response.json())
+  .then(data => {
+    // Display comments, likes, views
+    console.log(data);
+    // Example: document.getElementById('likes').innerText = data.likes;
+  });
+  //2. Add a Comment
+  fetch('http://localhost:3000/reviews/comment', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ image_id: 'IMAGE_ID', comment: 'Nice image!' })
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update UI or notify user
+    }
+  });
+
+  //3. Increment Likes
+fetch('http://localhost:3000/reviews/like', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ image_id: 'IMAGE_ID' })
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update likes count in UI
+    }
+  });
+
+  //4. Increment Views
+fetch('http://localhost:3000/reviews/view', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ image_id: 'IMAGE_ID' })
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update views count in UI
+    }
+  });
+
+
+    // Infinite scroll implementation
+    window.addEventListener("scroll", function () {
+        let { clientHeight, scrollHeight, scrollTop } = document.documentElement;
+        if (clientHeight + scrollTop + 1 >= scrollHeight) {
+            getImage(Infinity);
+        }
+    });
+
+    // Initial load of images
+    getImage(Infinity);
+</script>
+</html>
