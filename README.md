@@ -1,1 +1,2 @@
-Welcome to Picturistic! This project is a modern image gallery web app that demonstrates infinite scrolling, image viewing, and a simple review system (comments, likes, views) using Node.js and MySQL.
+Welcome to Picturistic! A full-stack dynamic image gallery web application with infinite scrolling, full-screen image viewing, and a built-in review system that supports likes, comments, and view tracking.
+Built using HTML, CSS, JavaScript, Node.js, and MySQL.
