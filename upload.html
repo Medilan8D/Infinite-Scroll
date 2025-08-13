@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - Picturistic</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Picturistic</h1>
+        <div>
+            <a href="index.html">Gallery</a>
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+    <main class="upload-main">
+        <section>
+            <h2>Upload a New Image</h2>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" name="image" accept="image/*" required><br><br>
+                <input type="text" name="title" placeholder="Image Title" required><br><br>
+                <button type="submit">Upload</button>
+            </form>
+            <div id="upload-status"></div>
+        </section>
+    </main>
+    <script>
+        document.getElementById('upload-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const res = await fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            document.getElementById('upload-status').textContent = data.success ? 'Upload successful!' : 'Upload failed.';
+        };
+    </script>
+</body>
+</html>
